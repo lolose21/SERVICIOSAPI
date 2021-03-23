@@ -31,9 +31,9 @@ web04cochesbasicosxml.jsp
               BUSCAR COCHES
           </button>
           <hr/>
-          <div id="coche"></div>
+          <ul id="coche"></ul>
           <div id="clasicos"></div>
-        </div>
+        </div> 
     </main><!-- /.container -->
     <jsp:include page="includes/webfooter.jsp"/>
     <script>
@@ -42,17 +42,15 @@ web04cochesbasicosxml.jsp
                 $.get("documents/coches_basicos.xml", 
                 function(data) {
                     console.log(("muestra si estas dentro"));
-                  var nombre = $("#cajacoche").val();
-                  var filtro ="MARCA:contains(" + nombre + ")";
+                  var marca = $("#cajacoche").val();
+                  var filtro ="MARCA:contains(" + marca + ")";
                   var coches = $(data).find(filtro);
-                 
-                  if(coches.length === 0){
-                      $("#coche").html("<h1 style='color:red'>NO EXISTE EL COCHE</h1>");
-                      
-                  }else{
-                      
-                      $("#coche").html(html);
-                  }
+                  var html ="";
+                  coches.each(function() {
+                      html += "<li class='list-group-item list-group-item-primary'>"
+                      + $(this).text() + "</li>";
+                });
+                $("#coche").html(html);
             });
         });
         $("#botonclasicos").click(function() {
