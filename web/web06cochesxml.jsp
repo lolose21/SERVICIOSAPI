@@ -13,20 +13,14 @@
         <div class="starter-template">
           <h1>COCHES XML</h1>
           <select class="form-control" id="selectcoches"></select>
-          <button type="button" class="btn btn-info"
-                  id="botonbuscar">
-                      Buscar
-          </button>
           <div id="cocheseleccionado"></div>
-          <ul id="vistacoches" class="list-group">
-              
-          </ul>
+         
         </div>
     </main><!-- /.container -->
     <jsp:include page="includes/webfooter.jsp"/>
     <script>
         $(document).ready(function() {
-            cargarCoches();
+           
             $.ajax({
                 url:"documents/coches.xml",
                 type:"GET",
@@ -36,40 +30,39 @@
                     var  coches = $(data).find("coche");
                     var html ="";
                     coches.each(function() {
-                       
-                        var
+                      var id =$(this).find("idcoche").text();
+                      var marca = $(this).find("marca").text();
+                        html += "<option value='" + id + "'>"
+                        + marca +  "</option>"; 
+                        
                     });
-                    var filtro = "idcoche:contains(" + coches + ")";
-                    var select = $(data).find(filtro).parent().first();
-                    
-                    select.each(function() {
-                       var num = $(this).attr("idcoche");
-                        html += "<option value='" + num + "'>"
-                        + num + "</option>";
-                    });
-                    $("#selectcoche").html(html);
-                }
-            });
-        });
-        function cargarCoches() {
-            $.ajax({
-                url:"documents/coches.xml",
-                type:"GET"
-                dataType:"xml"
-                success:function (data){
-                    var coches = $(data).find("idcoche");
-                    var htm = "";
-                    coches.each(function() {
-                         var id=$(this).find("idecoche").text();
-                        var marca = $(this).find("marca").text();
-                        html += "<option value='" + id  "'>"
-                        + marca +  "</option>";
-                });
-                    
                     $("#selectcoches").html(html);
                 }
             });
-        }
+            $("#selectcoches").change(function() {
+                var id = $("#selectcoches").val();
+                var filtro = "idcoche:contains(" + id + ")";
+                $.ajax({
+                    url: "documents/coches.xml",
+                    type: "GET",
+                    dataType: "xml",
+                    success: function(data){
+                        var elementoidcoche = $(data).find(filtro).first();
+                        //tenemos que subir un nivel para recuperar el coche
+                        var coche = $(elementoidcoche).parent();
+                        var marca =  $(coche).find("marca").text()
+                        + " , " + $(coche).find("modelo").text();
+                        var imagen = $(coche).find("imagen").text();
+                        var html = "<h1 style='color:red'>"
+                        + marca + "</h1>";
+                        html += "<img src='" + imagen + 
+                                "' style='width:400px;height:400px;'/>";
+                        $("#cocheseleccionado").html(html);
+                    }
+                });
+            });
+        });
+       
     </script>
     </body>
 </html>
